@@ -55,6 +55,7 @@ classdef utils
             n_people = size(pHistory,2)/3;
             
             figure('visible','off');
+            set(gcf, 'Position',  [0, 0, 800, 800])
             %figure()
             if ~debug
                 im = imshow('Images/parquet.jpg','XData',[0,edge_x],'YData',[0,edge_y]);
@@ -68,16 +69,25 @@ classdef utils
             hold on
             
             for i=1:n_people
-                plot(pHistory(1+(i-1)*3),pHistory(2+(i-1)*3),'ko','MarkerSize',10, 'LineWidth',1.5)
-                plot(pHistory(1+(i-1)*3)+0.1*cos(pHistory(3+(i-1)*3)),pHistory(2+(i-1)*3)+0.1*sin(pHistory(3+(i-1)*3)),'ko','MarkerSize',5, 'LineWidth',0.5)
                 utils.drawRectangleonImageAtAngle([pHistory(1+(i-1)*3); pHistory(2+(i-1)*3)], 0.2, 0.5, pHistory(3+(i-1)*3))
+                p = nsidedpoly(1000, 'Center', [pHistory(1+(i-1)*3),pHistory(2+(i-1)*3)], 'Radius', 0.125);
+                plot(p,'FaceColor', 'k', 'FaceAlpha', 1)
+                r = 0.125;
+                semicrc = r.*[cos(pHistory(3+(i-1)*3)-80/180*pi:0.1:pHistory(3+(i-1)*3)+80/180*pi); 
+                                sin(pHistory(3+(i-1)*3)-80/180*pi:0.1:pHistory(3+(i-1)*3)+80/180*pi)];
+                semicrc = semicrc + [pHistory(1+(i-1)*3); pHistory(2+(i-1)*3)];
+                patch(semicrc(1,:), semicrc(2,:), [1 0.7529 0.7960], 'FaceAlpha', 1)
+                %axis equal
+
+                %plot(pHistory(1+(i-1)*3)+0.1*cos(pHistory(3+(i-1)*3)),pHistory(2+(i-1)*3)+0.1*sin(pHistory(3+(i-1)*3)),'ko','MarkerSize',5, 'LineWidth',0.5)
+                
                 
                 p1 = [pHistory(1+(i-1)*3),pHistory(2+(i-1)*3)];
                 dp = [-v(i)*cos(pHistory(3+(i-1)*3)), -v(i)*sin(pHistory(3+(i-1)*3))];
-                quiver(p1(1),p1(2),dp(1),dp(2),0)
+                quiver(p1(1),p1(2),dp(1),dp(2),0, 'LineWidth', 2, 'Color', 'g')
                 
                 dp = [v_int(1+(i-1)*3) v_int(2+(i-1)*3)];
-                quiver(p1(1),p1(2),dp(1),dp(2),0)
+                quiver(p1(1),p1(2),dp(1),dp(2),0, 'LineWidth', 2, 'Color', 'b')
             end
             hold off
         end
@@ -136,7 +146,8 @@ classdef utils
 
             rot_coords = R*(coords-repmat(center,[1 4]))+repmat(center,[1 4]);
             rot_coords(:,5)=rot_coords(:,1);
-            line(rot_coords(1,:),rot_coords(2,:), 'color', 'red');
+            line(rot_coords(1,:),rot_coords(2,:), 'color', 'red' );
+            patch(rot_coords(1,:),rot_coords(2,:), 'red')
 
         end
     end

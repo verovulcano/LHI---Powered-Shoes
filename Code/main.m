@@ -20,7 +20,7 @@ edge_y = 5;
 r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma);
 
 dT = 0.1;
-T_tot = 20;
+T_tot = 30;
 i = 1;
 V_tot = [];
 V_int = [];
@@ -61,4 +61,4 @@ name = datestr(datetime('now'),formatOut);
 mkdir('results',name)
 
 close all
-utils.displayVideo(pHistory, V_tot, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, true)
+utils.displayVideo(pHistory, V_tot, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
