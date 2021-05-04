@@ -36,10 +36,9 @@ classdef person_with_shoes
         function obj = applyInput(obj, v, t, dT)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            
-            x_k1 = obj.x + (obj.vx_int(t) - v*cos(obj.theta) )*dT;
-            y_k1 = obj.y + (obj.vy_int(t) - v*sin(obj.theta) )*dT;
-            theta_k1 = obj.theta + obj.w_int(t)*dT;
+            x_k1 = obj.x + (obj.vx_int{1}(t) - v*cos(obj.theta) )*dT;
+            y_k1 = obj.y + (obj.vy_int{1}(t) - v*sin(obj.theta) )*dT;
+            theta_k1 = obj.theta + obj.w_int{1}(t)*dT;
             
             %outputArg = [x_k1; y_k1; theta_k1];
             

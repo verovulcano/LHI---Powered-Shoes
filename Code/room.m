@@ -50,6 +50,35 @@ classdef room
             
         end
         
+        function V_tot = computeV(obj, t)
+            U = obj.getAllU();
+            
+            for i=1:obj.n_people
+                G_pinv = [-cos(obj.people{i}.theta) -sin(obj.people{i}.theta) 0];
+                v_ff(i) = G_pinv*[obj.people{i}.vx_int{1}(t);obj.people{i}.vy_int{1}(t);0];
+            end
+            
+            V_tot = U + v_ff';
+            
+        end
+        
+        function [V_tot, all_pos] = applyAllInput(obj, t, dT)
+            
+            V_tot = obj.computeV(t);
+            
+            for i=1:obj.n_people
+                obj.people{i} = obj.people{i}.applyInput(V_tot(i), t, dT);
+                
+            end
+            
+            for i=1:obj.n_people
+                all_pos(i, 1:2) = obj.people{i}.getPosition();
+                all_pos(i, 3) = obj.people{i}.theta;
+            end
+            
+        end
+        
+        
 %         function outputArg = method1(obj,inputArg)
 %             %METHOD1 Summary of this method goes here
 %             %   Detailed explanation goes here
