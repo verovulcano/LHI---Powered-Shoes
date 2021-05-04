@@ -50,12 +50,15 @@ classdef utils
             
         end
         
-        function plotMap(pHistory, edge_x, edge_y)
+        function plotMap(pHistory, v, v_int, edge_x, edge_y, debug)
             
             n_people = size(pHistory,2)/3;
             
-            figure();
-            im = imshow('Images/parquet.jpg','XData',[0,edge_x],'YData',[0,edge_y]);
+            figure('visible','off');
+            %figure()
+            if ~debug
+                im = imshow('Images/parquet.jpg','XData',[0,edge_x],'YData',[0,edge_y]);
+            end
             set(gca,'Ydir','normal')
             h = gca;
             h.Visible = 'On';
@@ -65,19 +68,77 @@ classdef utils
             hold on
             
             for i=1:n_people
-                plot(pHistory(1+(i-1)*3),pHistory(2+(i-1)*3),'bo','MarkerSize',20, 'LineWidth',1.5)
+                plot(pHistory(1+(i-1)*3),pHistory(2+(i-1)*3),'ko','MarkerSize',10, 'LineWidth',1.5)
+                plot(pHistory(1+(i-1)*3)+0.1*cos(pHistory(3+(i-1)*3)),pHistory(2+(i-1)*3)+0.1*sin(pHistory(3+(i-1)*3)),'ko','MarkerSize',5, 'LineWidth',0.5)
+                utils.drawRectangleonImageAtAngle([pHistory(1+(i-1)*3); pHistory(2+(i-1)*3)], 0.2, 0.5, pHistory(3+(i-1)*3))
+                
+                p1 = [pHistory(1+(i-1)*3),pHistory(2+(i-1)*3)];
+                dp = [-v(i)*cos(pHistory(3+(i-1)*3)), -v(i)*sin(pHistory(3+(i-1)*3))];
+                quiver(p1(1),p1(2),dp(1),dp(2),0)
+                
+                dp = [v_int(1+(i-1)*3) v_int(2+(i-1)*3)];
+                quiver(p1(1),p1(2),dp(1),dp(2),0)
             end
             hold off
         end
         
-        function displayVideo(pHistory, edge_x, edge_y)
-            
-            for i=1:size(pHistory,1)
-                utils.plotMap(pHistory(i,:), edge_x, edge_y)
+        function displayVideo(pHistory, V_tot, V_int, edge_x, edge_y, path, fr, debug)
+            video_name = strcat(path,'/myVideo');
+            if ismac
+                % Code to run on Mac platform
+                v = VideoWriter(video_name,'MPEG-4');
+            elseif isunix
+                % Code to run on Linux platform
+                v = VideoWriter(video_name);
+            elseif ispc
+                % Code to run on Windows platform
+                v = VideoWriter(video_name,'MPEG-4');
+            else
+                disp('Platform not supported')
+                v = VideoWriter(video_name);
             end
-            
+            v.FrameRate = fr;
+            open(v)
+            f = waitbar(0, 'Please wait...');
+            shape = [800, 800];
+            for i=1:size(pHistory,1)
+                utils.plotMap(pHistory(i,:), V_tot(i, :), V_int(i, :), edge_x, edge_y, debug)
+                frame = getframe(gcf);
+                if size(frame.cdata, 1)~=shape(1) || size(frame.cdata, 2)~=shape(2)
+                    %new_frame = uint8(ones(shape(1), shape(2), 3)*255);
+                    %new_frame(1:size(frame.cdata, 1), 1:size(frame.cdata, 2), :) = frame.cdata;
+                    new_frame = imresize(frame.cdata,[shape(1) shape(2)]);
+                    frame.cdata = new_frame;
+                end
+                writeVideo(v,frame)
+                waitbar(i/size(pHistory,1), f, 'Please wait...');
+            end
+            close(f)
+            close(v)
+            if ismac
+                % Code to run on Mac platform
+            elseif isunix
+                % Code to run on Linux platform
+                % If Linux, convert AVI to MP4 using ffmpeg
+                command = strcat('ffmpeg -i',{' '},video_name,'.avi',{' '},video_name,'.mp4');
+                command = command{1};
+                system(command);
+            end
         end
         
+        function drawRectangleonImageAtAngle(center,width, height,angle)
+            hold on;
+            theta = -angle;
+            coords = [center(1)-(width/2) center(1)-(width/2) center(1)+(width/2)  center(1)+(width/2);...
+                      center(2)-(height/2) center(2)+(height/2) center(2)+(height/2)  center(2)-(height/2)];
+            R = [cos(theta) sin(theta);...
+                -sin(theta) cos(theta)];
+
+            rot_coords = R*(coords-repmat(center,[1 4]))+repmat(center,[1 4]);
+            rot_coords(:,5)=rot_coords(:,1);
+            line(rot_coords(1,:),rot_coords(2,:), 'color', 'red');
+
+        end
     end
 end
 

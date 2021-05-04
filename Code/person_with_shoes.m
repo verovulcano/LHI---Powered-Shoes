@@ -1,4 +1,4 @@
-classdef person_with_shoes
+classdef person_with_shoes < handle
     %PERSON_WITH_SHOES Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -33,15 +33,13 @@ classdef person_with_shoes
             obj.gamma = gamma;
         end
         
-        function obj = applyInput(obj, v, t, dT)
+        function applyInput(obj, v, t, dT)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             x_k1 = obj.x + (obj.vx_int{1}(t) - v*cos(obj.theta) )*dT;
             y_k1 = obj.y + (obj.vy_int{1}(t) - v*sin(obj.theta) )*dT;
-            theta_k1 = obj.theta + obj.w_int{1}(t)*dT;
-            
-            %outputArg = [x_k1; y_k1; theta_k1];
-            
+            theta_k1 = obj.theta + (obj.w_int{1}(t))*dT;
+                        
             obj.x = x_k1;
             obj.y = y_k1;
             obj.theta = theta_k1;
@@ -49,6 +47,10 @@ classdef person_with_shoes
         
         function output = getPosition(obj)
            output = [obj.x; obj.y];
+        end
+        
+        function V = getIntentional(obj, t)
+            V = [obj.vx_int{1}(t); obj.vy_int{1}(t); obj.w_int{1}(t)];
         end
         
         function u_tot = computeU(obj, obs)
