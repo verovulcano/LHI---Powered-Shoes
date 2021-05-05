@@ -68,10 +68,15 @@ classdef utils
             axis([-1 edge_x+1 -1 edge_y+1])
             hold on
             
+            shirt_colors = ['r', 'b', 'g', 'm'];
+            hair_colors = [0.8 0.5 0.2;
+                           0.5 0.3 0.1;
+                           0.7 0.7 0.7;
+                           0.9, 0.8, 0.5];
             for i=1:n_people
-                utils.drawRectangleonImageAtAngle([pHistory(1+(i-1)*3); pHistory(2+(i-1)*3)], 0.2, 0.5, pHistory(3+(i-1)*3))
+                utils.drawRectangleonImageAtAngle([pHistory(1+(i-1)*3); pHistory(2+(i-1)*3)], 0.2, 0.5, pHistory(3+(i-1)*3), shirt_colors(i));
                 p = nsidedpoly(1000, 'Center', [pHistory(1+(i-1)*3),pHistory(2+(i-1)*3)], 'Radius', 0.125);
-                plot(p,'FaceColor', 'k', 'FaceAlpha', 1)
+                plot(p,'FaceColor', hair_colors(i,:), 'FaceAlpha', 1)
                 r = 0.125;
                 semicrc = r.*[cos(pHistory(3+(i-1)*3)-80/180*pi:0.1:pHistory(3+(i-1)*3)+80/180*pi); 
                                 sin(pHistory(3+(i-1)*3)-80/180*pi:0.1:pHistory(3+(i-1)*3)+80/180*pi)];
@@ -136,7 +141,7 @@ classdef utils
             end
         end
         
-        function drawRectangleonImageAtAngle(center,width, height,angle)
+        function drawRectangleonImageAtAngle(center,width, height,angle, color)
             hold on;
             theta = -angle;
             coords = [center(1)-(width/2) center(1)-(width/2) center(1)+(width/2)  center(1)+(width/2);...
@@ -146,8 +151,9 @@ classdef utils
 
             rot_coords = R*(coords-repmat(center,[1 4]))+repmat(center,[1 4]);
             rot_coords(:,5)=rot_coords(:,1);
-            line(rot_coords(1,:),rot_coords(2,:), 'color', 'red' );
-            patch(rot_coords(1,:),rot_coords(2,:), 'red')
+            
+            line(rot_coords(1,:),rot_coords(2,:), 'color', color );
+            patch(rot_coords(1,:),rot_coords(2,:), color)
 
         end
     end

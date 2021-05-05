@@ -4,10 +4,10 @@ clc
 
 %% Simulation
 
-people_q = [1, 1, pi/3;
-            4, 1, pi/4;
-            4, 4, 0;
-            1, 4, pi/2];
+people_q = [2, 2, pi/3;
+            3, 2, pi/4;
+            3, 3, 0;
+            2, 3, pi/2];
 
 people_int = {{@(t) 1/4*cos(t), @(t) 1/4*sin(t), @(t) sin(t/3) }, {@(t) 1/4*cos(t), @(t) 1/4*cos(t), @(t) sin(t/3)},...
               {@(t) 1/4*cos(3*t), @(t) 1/4*cos(t), @(t) sin(2*t/3)}, {@(t) 1/8*cos(t/4), @(t) 1/4*cos(t), @(t) sin(-t/3) }};
@@ -73,4 +73,4 @@ name = datestr(datetime('now'),formatOut);
 mkdir('results',name)
 
 close all
-utils.displayVideo(pHistory, V_tot, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, true)
+utils.displayVideo(pHistory, V_tot, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
