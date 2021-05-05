@@ -36,8 +36,9 @@ classdef person_with_shoes < handle
         function applyInput(obj, v, t, dT)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            x_k1 = obj.x + (obj.vx_int{1}(t) - v*cos(obj.theta) )*dT;
-            y_k1 = obj.y + (obj.vy_int{1}(t) - v*sin(obj.theta) )*dT;
+            angle_noise=normrnd(0, obj.sigma_theta);
+            x_k1 = obj.x + (obj.vx_int{1}(t) - v*cos(obj.theta+angle_noise) )*dT;
+            y_k1 = obj.y + (obj.vy_int{1}(t) - v*sin(obj.theta+angle_noise) )*dT;
             theta_k1 = obj.theta + (obj.w_int{1}(t))*dT;
                         
             obj.x = x_k1;

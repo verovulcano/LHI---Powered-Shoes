@@ -58,7 +58,7 @@ classdef room < handle
                 v_ff(i) = -G_pinv * obj.people{i}.getIntentional(t);
             end
             
-            V_tot = U + v_ff';
+            V_tot = U + obj.people{i}.recovered_v*v_ff';
             
         end
         
