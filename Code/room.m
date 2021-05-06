@@ -55,25 +55,30 @@ classdef room < handle
             
             for i=1:obj.n_people
                 G_pinv = [-cos(obj.people{i}.theta) -sin(obj.people{i}.theta) 0];
-                v_ff(i) = -G_pinv * obj.people{i}.getIntentional(t);
+                 R = [cos(obj.people{i}.theta) -sin(obj.people{i}.theta);
+                sin(obj.people{i}.theta) cos(obj.people{i}.theta);];
+
+                v_int = double(obj.people{i}.getIntentional(t));
+                v_intxy = R*(v_int(1:2));
+                v_ff(i) = -G_pinv * [v_intxy;0];
             end
             
             V_tot = U + obj.people{i}.recovered_v*v_ff';
             
         end
         
-        function [V_tot, V_int, all_pos] = applyAllInput(obj, t, dT)
+        function [V_tot, v_applied, V_int, all_pos] = applyAllInput(obj, t, dT)
             
             V_tot = obj.computeV(t);
             
             for i=1:obj.n_people
-                obj.people{i}.applyInput(V_tot(i), t, dT);
+                v_applied(i, :) = obj.people{i}.applyInput(V_tot(i), t, dT);
             end
             
             for i=1:obj.n_people
                 all_pos(i, 1:2) = obj.people{i}.getPosition();
                 all_pos(i, 3) = obj.people{i}.theta;
-                V_int(i, :) = obj.people{i}.getIntentional(t);
+                V_int(i, :) = double(obj.people{i}.getIntentional(t));
             end
             
         end

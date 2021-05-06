@@ -33,17 +33,24 @@ classdef person_with_shoes < handle
             obj.gamma = gamma;
         end
         
-        function applyInput(obj, v, t, dT)
+        function v_applied = applyInput(obj, v, t, dT)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             angle_noise=normrnd(0, obj.sigma_theta);
-            x_k1 = obj.x + (obj.vx_int{1}(t) - v*cos(obj.theta+angle_noise) )*dT;
-            y_k1 = obj.y + (obj.vy_int{1}(t) - v*sin(obj.theta+angle_noise) )*dT;
-            theta_k1 = obj.theta + (obj.w_int{1}(t))*dT;
+            R = [cos(obj.theta) -sin(obj.theta);
+            sin(obj.theta) cos(obj.theta);];
+            
+            v_int = double([obj.vx_int{1}(t);obj.vy_int{1}(t)]);
+            v_intxy = R*v_int;
+            
+            x_k1 = obj.x + (v_intxy(1) - v*cos(obj.theta+angle_noise) )*dT;
+            y_k1 = obj.y + (v_intxy(2) - v*sin(obj.theta+angle_noise) )*dT;
+            theta_k1 = obj.theta + (double(obj.w_int{1}(t)))*dT;
                         
             obj.x = x_k1;
             obj.y = y_k1;
             obj.theta = theta_k1;
+            v_applied = [- v*cos(obj.theta+angle_noise); - v*sin(obj.theta+angle_noise)];
         end
         
         function output = getPosition(obj)
@@ -51,7 +58,7 @@ classdef person_with_shoes < handle
         end
         
         function V = getIntentional(obj, t)
-            V = [obj.vx_int{1}(t); obj.vy_int{1}(t); obj.w_int{1}(t)];
+            V = double([obj.vx_int{1}(t); obj.vy_int{1}(t); obj.w_int{1}(t)]);
         end
         
         function u_tot = computeU(obj, obs)

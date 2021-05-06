@@ -50,7 +50,7 @@ classdef utils
             
         end
         
-        function plotMap(pHistory, v, v_int, edge_x, edge_y, debug)
+        function plotMap(pHistory, v, v_app, v_int, edge_x, edge_y, debug)
             
             n_people = size(pHistory,2)/3;
             
@@ -88,16 +88,21 @@ classdef utils
                 
                 
                 p1 = [pHistory(1+(i-1)*3),pHistory(2+(i-1)*3)];
-                dp = [-v(i)*cos(pHistory(3+(i-1)*3)), -v(i)*sin(pHistory(3+(i-1)*3))];
+                dp = [v_app(1+(i-1)*2) v_app(2+(i-1)*2)];
                 quiver(p1(1),p1(2),dp(1),dp(2),0, 'LineWidth', 2, 'Color', 'g')
                 
-                dp = [v_int(1+(i-1)*3) v_int(2+(i-1)*3)];
+                 R = [cos(pHistory(3+(i-1)*3)) -sin(pHistory(3+(i-1)*3));
+                sin(pHistory(3+(i-1)*3)) cos(pHistory(3+(i-1)*3));];
+
+                v_int_i = [v_int(1+(i-1)*3); v_int(2+(i-1)*3)];;
+                v_intxy = R*v_int_i;
+                dp = [v_intxy(1) v_intxy(2)];
                 quiver(p1(1),p1(2),dp(1),dp(2),0, 'LineWidth', 2, 'Color', 'b')
             end
             hold off
         end
         
-        function displayVideo(pHistory, V_tot, V_int, edge_x, edge_y, path, fr, debug)
+        function displayVideo(pHistory, V_tot, V_app, V_int, edge_x, edge_y, path, fr, debug)
             video_name = strcat(path,'/myVideo');
             if ismac
                 % Code to run on Mac platform
@@ -117,7 +122,7 @@ classdef utils
             f = waitbar(0, 'Please wait...');
             shape = [800, 800];
             for i=1:size(pHistory,1)
-                utils.plotMap(pHistory(i,:), V_tot(i, :), V_int(i, :), edge_x, edge_y, debug)
+                utils.plotMap(pHistory(i,:), V_tot(i, :), V_app(i, :), V_int(i, :), edge_x, edge_y, debug)
                 frame = getframe(gcf);
                 if size(frame.cdata, 1)~=shape(1) || size(frame.cdata, 2)~=shape(2)
                     %new_frame = uint8(ones(shape(1), shape(2), 3)*255);

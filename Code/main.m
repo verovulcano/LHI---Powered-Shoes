@@ -11,7 +11,17 @@ people_q = [2, 2, pi/3;
 
 people_int = {{@(t) 1/4*cos(t), @(t) 1/4*sin(t), @(t) sin(t/3) }, {@(t) 1/4*cos(t), @(t) 1/4*cos(t), @(t) sin(t/3)},...
               {@(t) 1/4*cos(3*t), @(t) 1/4*cos(t), @(t) sin(2*t/3)}, {@(t) 1/8*cos(t/4), @(t) 1/4*cos(t), @(t) sin(-t/3) }};
+people_int = {{@(t) 1/4*cos(t), @(t) 0, @(t) sin(t/3) }, {@(t) 1/4*cos(t), @(t) 0, @(t) sin(t/3)},...
+              {@(t) 1/4*cos(3*t), @(t) 0, @(t) sin(2*t/3)}, {@(t) 1/8*cos(t/4), @(t) 0, @(t) sin(-t/3) }};
 
+people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
+              {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
+people_int = {{generate_exciting_traj(0, 1), generate_exciting_traj(-0.25, 0.25), generate_exciting_traj(-1.5, 1.5) },...
+              {generate_exciting_traj(0, 1), generate_exciting_traj(-0.25, 0.25), generate_exciting_traj(-1.5, 1.5)},...
+              {generate_exciting_traj(0, 1), generate_exciting_traj(-0.25, 0.25), generate_exciting_traj(-1.5, 1.5)},...
+              {generate_exciting_traj(0, 1), generate_exciting_traj(-0.25, 0.25), generate_exciting_traj(-1.5, 1.5)}};
+              
+disp("starting simulation");
 recovered_v = 0.9;
 sigma_theta = 5*pi/180;
 Kr = 1;
@@ -27,9 +37,10 @@ T_tot = 30;
 i = 1;
 V_tot = [];
 V_int = [];
+f = waitbar(0, 'Simulation...');
 for t=0:dT:T_tot
     
-    [V_tot1, V_int1, pos_xytheta{i}] = r.applyAllInput(t, dT);
+    [V_tot1, V_app, V_int1, pos_xytheta{i}] = r.applyAllInput(t, dT);
     
     p1History(i,:) =  pos_xytheta{i}(1,:);
     p2History(i,:) =  pos_xytheta{i}(2,:);
@@ -41,11 +52,17 @@ for t=0:dT:T_tot
     v3_int_History(i,:) =  V_int1(3, :);
     v4_int_History(i,:) =  V_int1(4, :);
     
+    v1_appl_History(i,:) =  V_app(1, :);
+    v2_appl_History(i,:) =  V_app(2, :);
+    v3_appl_History(i,:) =  V_app(3, :);
+    v4_appl_History(i,:) =  V_app(4, :);
+    
     V_tot = [V_tot, V_tot1];
     V_int = [V_int, V_int1];
     i = i + 1;
-    
+    waitbar(t/T_tot, f, 'Simulation...');
 end
+close(f);
 
 V_tot = V_tot';
 V_int = V_int';
@@ -66,6 +83,7 @@ utils.plotV(time, V_tot(:,4), 4)
 
 pHistory = [p1History,p2History, p3History, p4History];
 v_int_History = [v1_int_History,v2_int_History,v3_int_History,v4_int_History];
+v_appl_History = [v1_appl_History,v2_appl_History,v3_appl_History,v4_appl_History];
 
 addpath('results')
 formatOut = 'yyyy.mm.dd-HH.MM.SS';
@@ -73,4 +91,4 @@ name = datestr(datetime('now'),formatOut);
 mkdir('results',name)
 
 close all
-utils.displayVideo(pHistory, V_tot, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
+utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
