@@ -56,9 +56,11 @@ classdef utils
             
             figure('visible','off');
             set(gcf, 'Position',  [0, 0, 800, 800])
-            %figure()
+            axis equal
+            %figure
             if ~debug
                 im = imshow('Images/parquet.jpg','XData',[0,edge_x],'YData',[0,edge_y]);
+                axis square
             end
             set(gca,'Ydir','normal')
             h = gca;
@@ -94,7 +96,7 @@ classdef utils
                  R = [cos(pHistory(3+(i-1)*3)) -sin(pHistory(3+(i-1)*3));
                 sin(pHistory(3+(i-1)*3)) cos(pHistory(3+(i-1)*3));];
 
-                v_int_i = [v_int(1+(i-1)*3); v_int(2+(i-1)*3)];;
+                v_int_i = [v_int(1+(i-1)*3); v_int(2+(i-1)*3)];
                 v_intxy = R*v_int_i;
                 dp = [v_intxy(1) v_intxy(2)];
                 quiver(p1(1),p1(2),dp(1),dp(2),0, 'LineWidth', 2, 'Color', 'b')
@@ -124,11 +126,13 @@ classdef utils
             for i=1:size(pHistory,1)
                 utils.plotMap(pHistory(i,:), V_tot(i, :), V_app(i, :), V_int(i, :), edge_x, edge_y, debug)
                 frame = getframe(gcf);
-                if size(frame.cdata, 1)~=shape(1) || size(frame.cdata, 2)~=shape(2)
-                    %new_frame = uint8(ones(shape(1), shape(2), 3)*255);
-                    %new_frame(1:size(frame.cdata, 1), 1:size(frame.cdata, 2), :) = frame.cdata;
-                    new_frame = imresize(frame.cdata,[shape(1) shape(2)]);
-                    frame.cdata = new_frame;
+                if debug
+                    if size(frame.cdata, 1)~=shape(1) || size(frame.cdata, 2)~=shape(2)
+                        %new_frame = uint8(ones(shape(1), shape(2), 3)*255);
+                        %new_frame(1:size(frame.cdata, 1), 1:size(frame.cdata, 2), :) = frame.cdata;
+                        new_frame = imresize(frame.cdata,[shape(1) shape(2)]);
+                        frame.cdata = new_frame;
+                    end
                 end
                 writeVideo(v,frame)
                 waitbar(i/size(pHistory,1), f, 'Please wait...');
