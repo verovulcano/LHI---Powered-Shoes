@@ -7,6 +7,7 @@ classdef room < handle
         Edge_y
         n_people
         people
+        v_previous
     end
     
     methods
@@ -20,6 +21,7 @@ classdef room < handle
             for i=1:obj.n_people
                 obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma);
             end
+            obj.v_previous=zeros(obj.n_people,1);
         end
         
         function U = getAllU(obj)
@@ -65,6 +67,31 @@ classdef room < handle
             
             V_tot = U + obj.people{i}.recovered_v*v_ff';
             
+            limit=0.8;
+            for i=1:obj.n_people
+                                
+                if V_tot(i)>1
+                    V_tot(i)=1;
+                elseif V_tot(i)<-1
+                    V_tot(i)=-1;
+                end
+
+                if V_tot(i)-obj.v_previous(i)>limit
+                    V_tot(i)=limit+obj.v_previous(i);
+                elseif V_tot(i)-obj.v_previous(i)<-limit
+                    V_tot(i)=-limit+obj.v_previous(i);
+                end
+                                            
+                if V_tot(i)>1
+                    V_tot(i)=1;
+                elseif V_tot(i)<-1
+                    V_tot(i)=-1;
+                end
+
+            end
+            
+            obj.v_previous=V_tot;
+     
         end
         
         function [V_tot, v_applied, V_int, all_pos] = applyAllInput(obj, t, dT)
