@@ -9,13 +9,13 @@ people_q = [2, 2, pi/3;
             3, 3, 0;
             2, 3, pi/2];
 
-people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5) },...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)}};
+% people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5) },...
+%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
+%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
+%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)}};
 
-% people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
-%               {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
+people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
+              {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
           
 disp("starting simulation");
 recovered_v = 0.9;
@@ -88,20 +88,29 @@ utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_
 
 utils.plotState(time, p1History, 1)
 saveas(gcf,strcat('results/',name,'/state_p1'),'epsc')
+saveas(gcf,strcat('results/',name,'/state%_p1.png'))
 utils.plotState(time, p2History, 2)
 saveas(gcf,strcat('results/',name,'/state_p2'),'epsc')
+saveas(gcf,strcat('results/',name,'/state_p2.png'))
 utils.plotState(time, p3History, 3)
 saveas(gcf,strcat('results/',name,'/state_p3'),'epsc')
+saveas(gcf,strcat('results/',name,'/state_p3.png'))
 utils.plotState(time, p4History, 4)
 saveas(gcf,strcat('results/',name,'/state_p4'),'epsc')
+saveas(gcf,strcat('results/',name,'/state_p4.png'))
 
 utils.plotV(time, V_tot(:,1), 1)
 saveas(gcf,strcat('results/',name,'/command_p1'),'epsc')
+saveas(gcf,strcat('results/',name,'/command_p1.png'))
 utils.plotV(time, V_tot(:,2), 2)
 saveas(gcf,strcat('results/',name,'/command_p2'),'epsc')
+saveas(gcf,strcat('results/',name,'/command_p2.png'))
 utils.plotV(time, V_tot(:,3), 3)
 saveas(gcf,strcat('results/',name,'/command_p3'),'epsc')
+saveas(gcf,strcat('results/',name,'/command_p3.png'))
 utils.plotV(time, V_tot(:,4), 4)
 saveas(gcf,strcat('results/',name,'/command_p4'),'epsc')
+saveas(gcf,strcat('results/',name,'/command_p4.png'))
+
 
 utils.plotIntentional(time, v_int1_History, v_est_History, pHistory, strcat('results/',name))

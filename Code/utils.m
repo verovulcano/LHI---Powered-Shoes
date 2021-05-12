@@ -69,6 +69,7 @@ classdef utils
             for n = 1:n_people
                 utils.plotVperson(time,V_int(:,(1+(n-1)*2):(1+(n-1)*2)+1),V_est(:,(1+(n-1)*2):(1+(n-1)*2)+1),n)
                 saveas(gcf,strcat(path,'/intentional_p',string(n)),'epsc')
+                saveas(gcf,strcat(path,'/intentional_p',string(n),'.png'))
             end
             
         end
