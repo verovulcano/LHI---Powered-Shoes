@@ -8,6 +8,7 @@ classdef room < handle
         n_people
         people
         v_previous
+        observers
     end
     
     methods
@@ -20,6 +21,7 @@ classdef room < handle
             obj.people = cell(obj.n_people, 1);
             for i=1:obj.n_people
                 obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma);
+                obj.observers{i} = observer(5);
             end
             obj.v_previous=zeros(obj.n_people,1);
         end
@@ -52,17 +54,20 @@ classdef room < handle
             
         end
         
-        function V_tot = computeV(obj, t)
+        function [V_tot,V_est] = computeV(obj, t, dT)
             U = obj.getAllU();
             
             for i=1:obj.n_people
                 G_pinv = [-cos(obj.people{i}.theta) -sin(obj.people{i}.theta) 0];
                  R = [cos(obj.people{i}.theta) -sin(obj.people{i}.theta);
                 sin(obj.people{i}.theta) cos(obj.people{i}.theta);];
+                
+                v_est = obj.observers{i}.update(obj.people{i}.x,obj.people{i}.y,obj.people{i}.theta,obj.v_previous(i), dT);
 
-                v_int = double(obj.people{i}.getIntentional(t));
-                v_intxy = R*(v_int(1:2));
-                v_ff(i) = -G_pinv * [v_intxy;0];
+                %v_int = double(obj.people{i}.getIntentional(t));
+                %v_intxy = R*(v_int(1:2));
+                v_ff(i) = -G_pinv * [v_est;0];
+                V_est(i,:) = v_est';
             end
             
             V_tot = U + obj.people{i}.recovered_v*v_ff';
@@ -94,9 +99,9 @@ classdef room < handle
      
         end
         
-        function [V_tot, v_applied, V_int, all_pos] = applyAllInput(obj, t, dT)
+        function [V_tot, v_applied, V_int, all_pos, V_est] = applyAllInput(obj, t, dT)
             
-            V_tot = obj.computeV(t);
+            [V_tot,V_est] = obj.computeV(t,dT);
             
             for i=1:obj.n_people
                 all_pos(i, 1:2) = obj.people{i}.getPosition();

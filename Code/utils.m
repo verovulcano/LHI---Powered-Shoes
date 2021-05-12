@@ -50,6 +50,59 @@ classdef utils
             
         end
         
+        function plotIntentional(time,V_int,V_est,pHistory,path)
+            
+            n_people = size(pHistory,2)/3;
+            
+            for n = 1:n_people
+                for i=1:size(pHistory,1)
+                    
+                    R = [cos(pHistory(i,3+(n-1)*3)) -sin(pHistory(i,3+(n-1)*3));
+                         sin(pHistory(i,3+(n-1)*3)) cos(pHistory(i,3+(n-1)*3))];
+                    
+                    V_int1 = V_int(i,(1+(n-1)*2):(1+(n-1)*2)+1)';
+                    V_int1 = R*V_int1;
+                    V_int(i,(1+(n-1)*2):(1+(n-1)*2)+1) = V_int1';
+                end
+            end
+            
+            for n = 1:n_people
+                utils.plotVperson(time,V_int(:,(1+(n-1)*2):(1+(n-1)*2)+1),V_est(:,(1+(n-1)*2):(1+(n-1)*2)+1),n)
+                saveas(gcf,strcat(path,'/intentional_p',string(n)),'epsc')
+            end
+            
+        end
+        
+        function plotVperson(time,v_int,v_est,n)
+            
+            name_figure = strcat('Intentional velocity of person',{' '},string(n));
+            
+            figure('Name', name_figure);
+            
+            subplot(2,1,1);
+            p1 = plot(time,v_int(:,1));
+            p1.LineWidth = 1.5;
+            grid on
+            hold on
+            p2 = plot(time,v_est(:,1));
+            p2.LineWidth = 1.5;
+            xlabel('Time (s)','FontSize',15.0)
+            ylabel('$V_x$','Interpreter','latex','FontSize',20.0,'FontWeight','Bold')
+            legend({'$V_x$','$\tilde{V_x}$'},'Interpreter','latex','FontSize',15.0)
+            
+            subplot(2,1,2);
+            p3 = plot(time,v_int(:,2));
+            p3.LineWidth = 1.5;
+            grid on
+            hold on
+            p4 = plot(time,v_est(:,2));
+            p4.LineWidth = 1.5;
+            xlabel('Time (s)','FontSize',15.0)
+            ylabel('$V_y$','Interpreter','latex','FontSize',20.0,'FontWeight','Bold')
+            legend({'$V_y$','$\tilde{V_y}$'},'Interpreter','latex','FontSize',15.0)
+            
+        end
+        
         function plotMap(pHistory, v, v_app, v_int, edge_x, edge_y, debug)
             
             n_people = size(pHistory,2)/3;
