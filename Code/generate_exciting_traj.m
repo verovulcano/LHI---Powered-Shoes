@@ -32,5 +32,6 @@ function [pos] = generate_exciting_traj(min_q, max_q)
 
     maximum = max(pos(extrema));
     pos = @(t) pos(t) - (maximum-max_q);
+    pos = @(t) pos(t) - pos(0);
 
 end
