@@ -21,7 +21,7 @@ classdef room < handle
             obj.people = cell(obj.n_people, 1);
             for i=1:obj.n_people
                 obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma);
-                obj.observers{i} = observer(5);
+                obj.observers{i} = observer(3, obj.people{i}.x, obj.people{i}.y);
             end
             obj.v_previous=zeros(obj.n_people,1);
         end

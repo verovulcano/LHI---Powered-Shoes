@@ -10,13 +10,13 @@ classdef observer < handle
     end
     
     methods
-        function obj = observer(k_w)
+        function obj = observer(k_w,x,y)
             %OBSERVER Construct an instance of this class
             %   Detailed explanation goes here
             obj.k_wx = k_w;
             obj.k_wy = k_w;
-            obj.xi_x = 0;
-            obj.xi_y = 0;
+            obj.xi_x = x;
+            obj.xi_y = y;
         end
         
         function V = update(obj,x,y,theta,v,dT)
