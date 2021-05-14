@@ -100,9 +100,7 @@ classdef room < handle
                 end
 
             end
-            
-            obj.v_previous=V_tot;
-     
+        
         end
         
         function [V_tot, v_applied, V_int, all_pos, V_est] = applyAllInput(obj, t, dT)
@@ -121,7 +119,9 @@ classdef room < handle
                    V_tot(i) = 0;
                 end
             end
- 
+            
+            obj.v_previous=V_tot;
+            
             for i=1:obj.n_people
                 v_applied(i, :) = obj.people{i}.applyInput(V_tot(i), t, dT);
             end
