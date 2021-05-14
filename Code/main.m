@@ -9,11 +9,20 @@ people_q = [2, 2, pi/3;
             3, 3, 0;
             2, 3, pi/2];
 
-people_int = {{generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false) },...
-              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
-              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
-              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)}};
+% RANDOM TRAJECTORIES
+% people_int = {{generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false) },...
+%               {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
+%               {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
+%               {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)}};
 
+% STANDARD TRAJECTORIES
+load('trajectories.mat')
+people_int = {{V1, @(t) 0, W1 },...
+              {V2, @(t) 0, W2},...
+              {V3, @(t) 0, W3},...
+              {V4, @(t) 0, W4}};
+
+% SIMPLE TRAJECTORIES
 % people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
 %               {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
           
@@ -91,7 +100,7 @@ mkdir('results',name);
 
 writeFile(strcat('results/',name,'/data.txt'), people_q, recovered_v, sigma_theta, Kr, gamma, edge_x, edge_y, noise_xy, noise_theta, k);
 
-utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
+%utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
 
 utils.plotState(time, p1History, 1)
 saveas(gcf,strcat('results/',name,'/state_p1'),'epsc')
