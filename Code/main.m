@@ -9,14 +9,14 @@ people_q = [2, 2, pi/3;
             3, 3, 0;
             2, 3, pi/2];
 
-% people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5) },...
-%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-%               {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)}};
+people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5) },...
+              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
+              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
+              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)}};
 
-people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
-              {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
-          
+% people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
+%               {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
+%           
 disp("starting simulation");
 recovered_v = 0.9;
 sigma_theta = 5*pi/180;
@@ -26,7 +26,10 @@ gamma = 2;
 edge_x = 5;
 edge_y = 5;
 
-r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma);
+noise_xy = 0.01;
+noise_theta = 5*pi/180;
+
+r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta);
 
 dT = 0.1;
 T_tot = 30;
@@ -36,6 +39,7 @@ V_int = [];
 f = waitbar(0, 'Simulation...');
 for t=0:dT:T_tot
     
+    r.applyNoise();
     [V_tot1, V_app, V_int1, pos_xytheta{i}, V_est1] = r.applyAllInput(t, dT);
     
     p1History(i,:) =  pos_xytheta{i}(1,:);
@@ -88,7 +92,7 @@ utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_
 
 utils.plotState(time, p1History, 1)
 saveas(gcf,strcat('results/',name,'/state_p1'),'epsc')
-saveas(gcf,strcat('results/',name,'/state%_p1.png'))
+saveas(gcf,strcat('results/',name,'/state_p1.png'))
 utils.plotState(time, p2History, 2)
 saveas(gcf,strcat('results/',name,'/state_p2'),'epsc')
 saveas(gcf,strcat('results/',name,'/state_p2.png'))

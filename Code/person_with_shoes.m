@@ -6,6 +6,9 @@ classdef person_with_shoes < handle
         x
         y
         theta
+        x_noise
+        y_noise
+        theta_noise
         vx_int
         vy_int
         w_int
@@ -13,10 +16,12 @@ classdef person_with_shoes < handle
         sigma_theta
         Kr
         gamma
+        noise_xy
+        noise_theta
     end
     
     methods
-        function obj = person_with_shoes(q, int_vel, recovered_v, sigma_theta, Kr, gamma)
+        function obj = person_with_shoes(q, int_vel, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta)
             
             %PERSON_WITH_SHOES Construct an instance of this class
             %   Detailed explanation goes here
@@ -24,6 +29,13 @@ classdef person_with_shoes < handle
             obj.x = q(1);
             obj.y = q(2);
             obj.theta = q(3);
+            obj.x_noise = q(1);
+            obj.y_noise = q(2);
+            obj.theta_noise = q(3);
+            
+            obj.noise_xy = noise_xy;
+            obj.noise_theta = noise_theta;
+            
             obj.vx_int = int_vel(1);
             obj.vy_int = int_vel(2);
             obj.w_int = int_vel(3);
@@ -31,6 +43,12 @@ classdef person_with_shoes < handle
             obj.sigma_theta = sigma_theta;
             obj.Kr = Kr;
             obj.gamma = gamma;
+        end
+        
+        function applyNoise(obj)
+            obj.x_noise = obj.x + normrnd(0, obj.noise_xy);
+            obj.y_noise = obj.y + normrnd(0, obj.noise_xy);
+            obj.theta_noise = obj.theta + normrnd(0, obj.noise_theta);
         end
         
         function v_applied = applyInput(obj, v, t, dT)
@@ -64,13 +82,13 @@ classdef person_with_shoes < handle
         function u_tot = computeU(obj, obs)
             
             u_tot = 0;
-            G_pinv = [-cos(obj.theta) -sin(obj.theta) 0];
+            G_pinv = [-cos(obj.theta_noise) -sin(obj.theta_noise) 0];
             for i=1:size(obs, 1)
                 ob = obs(i, :);
                 
-                n = norm([obj.x obj.y] - ob);
-                Dn = [ (obj.x - ob(1))/((obj.x - ob(1))^2 + (obj.y - ob(2))^2)^(1/2);
-                        (obj.y - ob(2))/((obj.x - ob(1))^2 + (obj.y - ob(2))^2)^(1/2);
+                n = norm([obj.x_noise obj.y_noise] - ob);
+                Dn = [ (obj.x_noise - ob(1))/((obj.x_noise - ob(1))^2 + (obj.y_noise - ob(2))^2)^(1/2);
+                        (obj.y_noise - ob(2))/((obj.x_noise - ob(1))^2 + (obj.y_noise - ob(2))^2)^(1/2);
                         0];
                 f = (obj.Kr/n^2)*( (1/n)^(obj.gamma-1) ) * Dn;
                 

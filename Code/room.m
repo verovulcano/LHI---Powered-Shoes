@@ -12,7 +12,7 @@ classdef room < handle
     end
     
     methods
-        function obj = room(edgex, edgey, people_q, people_int, recovered_v, sigma_theta, Kr, gamma)
+        function obj = room(edgex, edgey, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta)
             %ROOM Construct an instance of this class
             %   Detailed explanation goes here
             obj.Edge_x = edgex;
@@ -20,10 +20,16 @@ classdef room < handle
             obj.n_people = size(people_q, 1);
             obj.people = cell(obj.n_people, 1);
             for i=1:obj.n_people
-                obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma);
-                obj.observers{i} = observer(3, obj.people{i}.x, obj.people{i}.y);
+                obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta);
+                obj.observers{i} = observer(1, obj.people{i}.x, obj.people{i}.y);
             end
             obj.v_previous=zeros(obj.n_people,1);
+        end
+        
+        function applyNoise(obj)
+           for i=1:obj.n_people
+               obj.people{i}.applyNoise();
+           end
         end
         
         function U = getAllU(obj)
@@ -32,14 +38,14 @@ classdef room < handle
             all_walls = cell(obj.n_people, 1);
             
             for i=1:obj.n_people
-                all_pos(i, :) = obj.people{i}.getPosition();
+                all_pos(i, :) = [obj.people{i}.x_noise; obj.people{i}.y_noise];
             end
             for i=1:obj.n_people
                 all_walls{i} = zeros(4, 2);
-                all_walls{i} = [obj.people{i}.x 0;
-                                obj.people{i}.x obj.Edge_y;
-                                0 obj.people{i}.y;
-                                obj.Edge_x obj.people{i}.y];
+                all_walls{i} = [obj.people{i}.x_noise 0;
+                                obj.people{i}.x_noise obj.Edge_y;
+                                0 obj.people{i}.y_noise;
+                                obj.Edge_x obj.people{i}.y_noise];
             end
             for i=1:obj.n_people
                 all_pos_i = all_pos;
@@ -58,11 +64,11 @@ classdef room < handle
             U = obj.getAllU();
             
             for i=1:obj.n_people
-                G_pinv = [-cos(obj.people{i}.theta) -sin(obj.people{i}.theta) 0];
-                 R = [cos(obj.people{i}.theta) -sin(obj.people{i}.theta);
-                sin(obj.people{i}.theta) cos(obj.people{i}.theta);];
+                G_pinv = [-cos(obj.people{i}.theta_noise) -sin(obj.people{i}.theta_noise) 0];
+                 R = [cos(obj.people{i}.theta_noise) -sin(obj.people{i}.theta_noise);
+                sin(obj.people{i}.theta_noise) cos(obj.people{i}.theta_noise);];
                 
-                v_est = obj.observers{i}.update(obj.people{i}.x,obj.people{i}.y,obj.people{i}.theta,obj.v_previous(i), dT);
+                v_est = obj.observers{i}.update(obj.people{i}.x_noise,obj.people{i}.y_noise,obj.people{i}.theta_noise,obj.v_previous(i), dT);
 
                 %v_int = double(obj.people{i}.getIntentional(t));
                 %v_intxy = R*(v_int(1:2));
@@ -112,7 +118,7 @@ classdef room < handle
                 v_intxy = R*(v_int(1:2));
                 v_app = [- V_tot(i)*cos(obj.people{i}.theta); - V_tot(i)*sin(obj.people{i}.theta)];
                 if dot(v_intxy,v_app) > 0
-                    V_tot(i) = 0;
+                   V_tot(i) = 0;
                 end
             end
  
