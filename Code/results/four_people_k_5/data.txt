@@ -1,0 +1,10 @@
+start positions = [2 2 1.0471975511966;3 2 0.785398163397448;3 3 0;2 3 1.5707963267949]
+recovered_v = 0.9
+sigma_theta = 0.0872664625997165
+Kr = 1
+gamma = 2
+edge_x = 5
+edge_y = 5
+noise_xy = 0.01
+noise_theta = 0.0872664625997165
+k = 5
