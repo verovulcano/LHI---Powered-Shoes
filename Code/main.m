@@ -9,10 +9,10 @@ people_q = [2, 2, pi/3;
             3, 3, 0;
             2, 3, pi/2];
 
-people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5) },...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)},...
-              {generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5, 1.5)}};
+people_int = {{generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false) },...
+              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
+              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
+              {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)}};
 
 % people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
 %               {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
@@ -28,7 +28,7 @@ edge_y = 5;
 
 noise_xy = 0.01;
 noise_theta = 5*pi/180;
-k = 1;
+k = 2;
 
 r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, k, noise_xy, noise_theta);
 

@@ -1,4 +1,4 @@
-function [pos] = generate_exciting_traj(min_q, max_q)
+function [pos] = generate_exciting_traj(min_q, max_q, zeroed)
     %GENERATE_EXCITING_TRAJ Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -26,12 +26,14 @@ function [pos] = generate_exciting_traj(min_q, max_q)
         i = i+1;
     end
     extrema = vpa(sol);
-    maximum = max(pos(extrema));
-    minimum = min(pos(extrema));
-    pos = @(t) pos(t)*(limit*0.8)/(maximum-minimum);
+    [maximum, max_idx] = max(pos(extrema));
+    [minimum, min_idx] = min(pos(extrema));
+    pos = @(t) pos(t)*(limit)/(maximum-minimum);
 
     maximum = max(pos(extrema));
     pos = @(t) pos(t) - (maximum-max_q);
-    pos = @(t) pos(t) - pos(0);
+    if zeroed
+        pos = @(t) pos(t + extrema(min_idx));
+    end
 
 end
