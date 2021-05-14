@@ -100,7 +100,7 @@ mkdir('results',name);
 
 writeFile(strcat('results/',name,'/data.txt'), people_q, recovered_v, sigma_theta, Kr, gamma, edge_x, edge_y, noise_xy, noise_theta, k);
 
-%utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
+utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
 
 utils.plotState(time, p1History, 1)
 saveas(gcf,strcat('results/',name,'/state_p1'),'epsc')
