@@ -12,7 +12,7 @@ classdef room < handle
     end
     
     methods
-        function obj = room(edgex, edgey, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta)
+        function obj = room(edgex, edgey, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, k, noise_xy, noise_theta)
             %ROOM Construct an instance of this class
             %   Detailed explanation goes here
             obj.Edge_x = edgex;
@@ -21,7 +21,7 @@ classdef room < handle
             obj.people = cell(obj.n_people, 1);
             for i=1:obj.n_people
                 obj.people{i} = person_with_shoes(people_q(i, :), people_int{i}, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta);
-                obj.observers{i} = observer(1, obj.people{i}.x, obj.people{i}.y);
+                obj.observers{i} = observer(k, obj.people{i}.x, obj.people{i}.y);
             end
             obj.v_previous=zeros(obj.n_people,1);
         end

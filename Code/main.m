@@ -16,7 +16,7 @@ people_int = {{generate_exciting_traj(0, 1), @(t) 0, generate_exciting_traj(-1.5
 
 % people_int = {{@(t) 1, @(t) 0, @(t) sin(t/3) }, {@(t) 1, @(t) 0, @(t) sin(t/3)},...
 %               {@(t) 1, @(t) 0, @(t) sin(2*t/3)}, {@(t) 1, @(t) 0, @(t) sin(-t/3) }};
-%           
+          
 disp("starting simulation");
 recovered_v = 0.9;
 sigma_theta = 5*pi/180;
@@ -28,8 +28,9 @@ edge_y = 5;
 
 noise_xy = 0.01;
 noise_theta = 5*pi/180;
+k = 1;
 
-r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, noise_xy, noise_theta);
+r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, k, noise_xy, noise_theta);
 
 dT = 0.1;
 T_tot = 30;
@@ -86,7 +87,9 @@ v_int1_History = [v1_int_History(:,1:2),v2_int_History(:,1:2),v3_int_History(:,1
 addpath('results')
 formatOut = 'yyyy.mm.dd-HH.MM.SS';
 name = datestr(datetime('now'),formatOut);
-mkdir('results',name)
+mkdir('results',name);
+
+writeFile(strcat('results/',name,'/data.txt'), people_q, recovered_v, sigma_theta, Kr, gamma, edge_x, edge_y, noise_xy, noise_theta, k);
 
 utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
 
