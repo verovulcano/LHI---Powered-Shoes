@@ -35,8 +35,10 @@ gamma = 2;
 edge_x = 5;
 edge_y = 5;
 
-noise_xy = 0.01;
-noise_theta = 5*pi/180;
+% noise_xy = 0.01;
+% noise_theta = 5*pi/180;
+noise_xy = 0;
+noise_theta = 0;
 k = 2;
 
 r = room(edge_x, edge_y, people_q, people_int, recovered_v, sigma_theta, Kr, gamma, k, noise_xy, noise_theta);
