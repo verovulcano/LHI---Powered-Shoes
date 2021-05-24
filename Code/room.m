@@ -32,7 +32,7 @@ classdef room < handle
            end
         end
         
-        function U = getAllU(obj)
+        function [U, N] = getAllU(obj)
             U = zeros(obj.n_people, 1);
             all_pos = zeros(obj.n_people, 2);
             all_walls = cell(obj.n_people, 1);
@@ -54,14 +54,15 @@ classdef room < handle
 
                 obs_i = [all_pos_i; wall_i];
                 
-                u_i = obj.people{i}.computeU(obs_i);
+                [u_i, n_i] = obj.people{i}.computeU(obs_i);
                 U(i) = u_i;
+                N(i) = n_i;
             end
             
         end
         
-        function [V_tot,V_est] = computeV(obj, t, dT)
-            U = obj.getAllU();
+        function [V_tot,V_est, N] = computeV(obj, t, dT)
+            [U, N] = obj.getAllU();
             
             for i=1:obj.n_people
                 G_pinv = [-cos(obj.people{i}.theta_noise) -sin(obj.people{i}.theta_noise) 0];
@@ -103,9 +104,9 @@ classdef room < handle
         
         end
         
-        function [V_tot, v_applied, V_int, all_pos, V_est] = applyAllInput(obj, t, dT)
+        function [V_tot, v_applied, V_int, all_pos, V_est, N] = applyAllInput(obj, t, dT)
             
-            [V_tot,V_est] = obj.computeV(t,dT);
+            [V_tot,V_est, N] = obj.computeV(t,dT);
             
             for i=1:obj.n_people
                 all_pos(i, 1:2) = obj.people{i}.getPosition();

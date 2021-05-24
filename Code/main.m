@@ -15,7 +15,7 @@ people_q = [2, 2, pi/3;
 %               {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)},...
 %               {generate_exciting_traj(0, 1, true), @(t) 0, generate_exciting_traj(-1.5, 1.5, false)}};
 
-% STANDARD TRAJECTORIES
+% STANDARD TRAJECTORIESx
 load('trajectories.mat')
 people_int = {{V1, @(t) 0, W1 },...
               {V2, @(t) 0, W2},...
@@ -45,12 +45,13 @@ dT = 0.1;
 T_tot = 30;
 i = 1;
 V_tot = [];
+N_tot = [];
 V_int = [];
 f = waitbar(0, 'Simulation...');
 for t=0:dT:T_tot
     
     r.applyNoise();
-    [V_tot1, V_app, V_int1, pos_xytheta{i}, V_est1] = r.applyAllInput(t, dT);
+    [V_tot1, V_app, V_int1, pos_xytheta{i}, V_est1, N1] = r.applyAllInput(t, dT);
     
     p1History(i,:) =  pos_xytheta{i}(1,:);
     p2History(i,:) =  pos_xytheta{i}(2,:);
@@ -73,6 +74,7 @@ for t=0:dT:T_tot
     v4_appl_History(i,:) =  V_app(4, :);
     
     V_tot = [V_tot, V_tot1];
+    N_tot = [N_tot, N1'];
     V_int = [V_int, V_int1];
     i = i + 1;
     waitbar(t/T_tot, f, 'Simulation...');
@@ -80,6 +82,7 @@ end
 close(f);
 
 V_tot = V_tot';
+N_tot = N_tot';
 V_int = V_int';
 
 time = [0:dT:T_tot]';
@@ -100,7 +103,7 @@ mkdir('results',name);
 
 writeFile(strcat('results/',name,'/data.txt'), people_q, recovered_v, sigma_theta, Kr, gamma, edge_x, edge_y, noise_xy, noise_theta, k);
 
-utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
+%utils.displayVideo(pHistory, V_tot, v_appl_History, v_int_History, edge_x, edge_y, strcat('results/',name), 1/dT, false)
 
 utils.plotState(time, p1History, 1)
 saveas(gcf,strcat('results/',name,'/state_p1'),'epsc')
@@ -128,5 +131,17 @@ utils.plotV(time, V_tot(:,4), 4)
 saveas(gcf,strcat('results/',name,'/command_p4'),'epsc')
 saveas(gcf,strcat('results/',name,'/command_p4.png'))
 
+utils.plotN(time, N_tot(:,1), 1)
+saveas(gcf,strcat('results/',name,'/clearance_p1'),'epsc')
+saveas(gcf,strcat('results/',name,'/clearance_p1.png'))
+utils.plotN(time, N_tot(:,2), 2)
+saveas(gcf,strcat('results/',name,'/clearance_p2'),'epsc')
+saveas(gcf,strcat('results/',name,'/clearance_p2.png'))
+utils.plotN(time, N_tot(:,3), 3)
+saveas(gcf,strcat('results/',name,'/clearance_p3'),'epsc')
+saveas(gcf,strcat('results/',name,'/clearance_p3.png'))
+utils.plotN(time, N_tot(:,4), 4)
+saveas(gcf,strcat('results/',name,'/clearance_p4'),'epsc')
+saveas(gcf,strcat('results/',name,'/clearance_p4.png'))
 
 utils.plotIntentional(time, v_int1_History, v_est_History, pHistory, strcat('results/',name))

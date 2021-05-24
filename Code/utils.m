@@ -50,6 +50,20 @@ classdef utils
             
         end
         
+        function plotN(time, V, n)
+            
+            name_figure = strcat('Clearance of person',{' '},string(n));
+            
+            figure('Name', name_figure);
+            
+            p1 = plot(time,V);
+            p1.LineWidth = 1.5;
+            xlabel('Time (s)','FontSize',15.0)
+            ylabel('$\eta$','Interpreter','latex','FontSize',20.0,'FontWeight','Bold')
+            grid on
+            
+        end
+        
         function plotIntentional(time,V_int,V_est,pHistory,path)
             
             n_people = size(pHistory,2)/3;

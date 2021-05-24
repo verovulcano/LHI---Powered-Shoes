@@ -79,10 +79,12 @@ classdef person_with_shoes < handle
             V = double([obj.vx_int{1}(t); obj.vy_int{1}(t); obj.w_int{1}(t)]);
         end
         
-        function u_tot = computeU(obj, obs)
+        function [u_tot, min_n] = computeU(obj, obs)
             
             u_tot = 0;
             G_pinv = [-cos(obj.theta_noise) -sin(obj.theta_noise) 0];
+            min_n = 10e15;
+            
             for i=1:size(obs, 1)
                 ob = obs(i, :);
                 
@@ -94,6 +96,9 @@ classdef person_with_shoes < handle
                 
                 u = G_pinv*f;
                 u_tot = u_tot+u;
+                if n < min_n
+                    min_n = n;
+                end
             end
         end
     end
