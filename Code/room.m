@@ -61,7 +61,7 @@ classdef room < handle
             
         end
         
-        function [V_tot,V_est, N] = computeV(obj, t, dT)
+        function [V_tot,V_est, N, U] = computeV(obj, t, dT)
             [U, N] = obj.getAllU();
             
             for i=1:obj.n_people
@@ -104,9 +104,9 @@ classdef room < handle
         
         end
         
-        function [V_tot, v_applied, V_int, all_pos, V_est, N] = applyAllInput(obj, t, dT)
+        function [V_tot, v_applied, V_int, all_pos, V_est, N, U] = applyAllInput(obj, t, dT)
             
-            [V_tot,V_est, N] = obj.computeV(t,dT);
+            [V_tot,V_est, N, U] = obj.computeV(t,dT);
             
             for i=1:obj.n_people
                 all_pos(i, 1:2) = obj.people{i}.getPosition();

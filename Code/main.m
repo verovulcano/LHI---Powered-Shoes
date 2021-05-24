@@ -46,12 +46,13 @@ T_tot = 30;
 i = 1;
 V_tot = [];
 N_tot = [];
+U_tot = [];
 V_int = [];
 f = waitbar(0, 'Simulation...');
 for t=0:dT:T_tot
     
     r.applyNoise();
-    [V_tot1, V_app, V_int1, pos_xytheta{i}, V_est1, N1] = r.applyAllInput(t, dT);
+    [V_tot1, V_app, V_int1, pos_xytheta{i}, V_est1, N1, U1] = r.applyAllInput(t, dT);
     
     p1History(i,:) =  pos_xytheta{i}(1,:);
     p2History(i,:) =  pos_xytheta{i}(2,:);
@@ -75,6 +76,7 @@ for t=0:dT:T_tot
     
     V_tot = [V_tot, V_tot1];
     N_tot = [N_tot, N1'];
+    U_tot = [U_tot, U1];
     V_int = [V_int, V_int1];
     i = i + 1;
     waitbar(t/T_tot, f, 'Simulation...');
@@ -83,6 +85,7 @@ close(f);
 
 V_tot = V_tot';
 N_tot = N_tot';
+U_tot = U_tot';
 V_int = V_int';
 
 time = [0:dT:T_tot]';
@@ -143,5 +146,18 @@ saveas(gcf,strcat('results/',name,'/clearance_p3.png'))
 utils.plotN(time, N_tot(:,4), 4)
 saveas(gcf,strcat('results/',name,'/clearance_p4'),'epsc')
 saveas(gcf,strcat('results/',name,'/clearance_p4.png'))
+
+utils.plotU(time, U_tot(:,1), 1)
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p1'),'epsc')
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p1.png'))
+utils.plotU(time, U_tot(:,2), 2)
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p2'),'epsc')
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p2.png'))
+utils.plotU(time, U_tot(:,3), 3)
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p3'),'epsc')
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p3.png'))
+utils.plotU(time, U_tot(:,4), 4)
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p4'),'epsc')
+saveas(gcf,strcat('results/',name,'/repulsive_pot_p4.png'))
 
 utils.plotIntentional(time, v_int1_History, v_est_History, pHistory, strcat('results/',name))

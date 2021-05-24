@@ -50,6 +50,20 @@ classdef utils
             
         end
         
+        function plotU(time, V, n)
+            
+            name_figure = strcat('Repulsive potential of person',{' '},string(n));
+            
+            figure('Name', name_figure);
+            
+            p1 = plot(time,V);
+            p1.LineWidth = 1.5;
+            xlabel('Time (s)','FontSize',15.0)
+            ylabel('$u_{pot}$','Interpreter','latex','FontSize',20.0,'FontWeight','Bold')
+            grid on
+            
+        end
+        
         function plotN(time, V, n)
             
             name_figure = strcat('Clearance of person',{' '},string(n));
